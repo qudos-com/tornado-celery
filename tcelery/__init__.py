@@ -29,6 +29,14 @@ def setup_nonblocking_producer(celery_app=None, io_loop=None,
         options = celery_app.conf.get('CELERYT_PIKA_OPTIONS', {})
         producer_cls.conn_pool.connect(broker_url,
                                        options=options,
-                                       callback=on_ready)
+                                       callback=on_ready,
+                                       confirm_delivery=_get_confirm_publish_conf(celery_app.conf))
 
     io_loop.add_callback(connect)
+
+def _get_confirm_publish_conf(conf):
+    broker_transport_options = conf.get('BROKER_TRANSPORT_OPTIONS', {})
+    if (broker_transport_options and
+        broker_transport_options.get('confirm_publish') is True):
+        return True
+    return False
