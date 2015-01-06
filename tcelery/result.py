@@ -49,3 +49,7 @@ class AsyncResult(celery.result.AsyncResult):
     def _get_task_meta(self):
         self._producer.fail_if_backend_not_supported()
         return super(AsyncResult, self)._get_task_meta()
+
+    def maybe_reraise(self):
+        if self.state in celery.states.PROPAGATE_STATES:
+            raise super(AsyncResult, self).result
