@@ -8,11 +8,11 @@ from tornadoredis.pubsub import BaseSubscriber
 
 
 class CelerySubscriber(BaseSubscriber):
-    def unsubscribe_channel(self, channel_name):
+    def unsubscribe_channel(self, channel_name, callback=None):
         """Unsubscribes the redis client from the channel"""
         del self.subscribers[channel_name]
         del self.subscriber_count[channel_name]
-        self.redis.unsubscribe(channel_name)
+        self.redis.unsubscribe(channel_name, callback)
 
     def on_message(self, msg):
         if not msg:
@@ -68,8 +68,7 @@ class RedisConsumer(object):
     def on_result(self, key, callback, timeout, result):
         if timeout:
             self.producer.conn_pool.io_loop.remove_timeout(timeout)
-        self.subscriber.unsubscribe_channel(key)
-        callback(result)
+        self.subscriber.unsubscribe_channel(key, lambda: callback(result))
 
     def on_timeout(self, key):
         self.subscriber.unsubscribe_channel(key)
