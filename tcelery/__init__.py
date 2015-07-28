@@ -8,7 +8,7 @@ from .connection import ConnectionPool
 from .producer import NonBlockingTaskProducer
 from .result import AsyncResult
 
-VERSION = (0, 3, 6)
+VERSION = (99, 3, 6)
 __version__ = '.'.join(map(str, VERSION)) + '-dev'
 
 
