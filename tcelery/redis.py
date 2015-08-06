@@ -1,10 +1,13 @@
-from functools import partial
+import logging
 from datetime import timedelta
+from functools import partial
 
 from tornado import gen
 from tornadoredis import Client
 from tornadoredis.exceptions import ResponseError
 from tornadoredis.pubsub import BaseSubscriber
+
+logger = logging.getLogger(__name__)
 
 
 class CelerySubscriber(BaseSubscriber):
@@ -62,13 +65,23 @@ class RedisConsumer(object):
                 timedelta(milliseconds=expires), self.on_timeout, key)
         else:
             timeout = None
+        logger.debug("Subscribing to key %s (%s) with timeout %s",
+                     task_id, key, timeout)
         self.subscriber.subscribe(
             key, partial(self.on_result, key, callback, timeout))
 
     def on_result(self, key, callback, timeout, result):
         if timeout:
             self.producer.conn_pool.io_loop.remove_timeout(timeout)
-        self.subscriber.unsubscribe_channel(key, lambda: callback(result))
+        logger.debug("Got result for key %s, unsubscribing...", key)
+
+        self.subscriber.unsubscribe_channel(
+            key, partial(self.on_unsubscribed, key, callback, result))
+
+    def on_unsubscribed(self, key, callback, result):
+        logger.debug("Unsubscribed from %s", key)
+        callback(result)
 
     def on_timeout(self, key):
+        logger.debug("Task timed out on key %s")
         self.subscriber.unsubscribe_channel(key)
