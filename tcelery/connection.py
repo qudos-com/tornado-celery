@@ -103,11 +103,14 @@ class Connection(object):
                 mandatory=False, immediate=False, content_type=None,
                 content_encoding=None, serializer=None,
                 headers=None, compression=None, retry=False,
-                retry_policy=None, declare=[], **properties):
+                retry_policy=None, declare=[], priority=None, properties=None,
+                **kwargs):
         assert self.channel
         content_type = content_type or self.content_type
 
-        properties = pika.BasicProperties(content_type=content_type)
+        properties = pika.BasicProperties(content_type=content_type,
+                                          priority=priority,
+                                          **properties)
 
         self.channel.basic_publish(exchange=exchange, routing_key=routing_key,
                                    body=body, properties=properties,
