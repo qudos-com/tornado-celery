@@ -19,15 +19,17 @@ from setuptools import setup, find_packages
 #                 continue
 #             return ".".join(m.groups()[0].split(", "))
 
+version = re.compile(r'__version__\s*=\s*[\'\"](.+)[\"\']')
+
 def get_package_version():
     "returns package version without importing it"
     base = os.path.abspath(os.path.dirname(__file__))
     with open(os.path.join(base, "tcelery/__init__.py")) as initf:
         for line in initf:
-            version = re.match('__version__\s*=\s*[\'\"](.+)[\"\']', line).groups(1)[0]
-            if not version or not version.strip():
+            m = version.match(line.strip())
+            if not m:
                 continue
-            return version
+            return m.groups(1)[0]
 
 install_requires = ['celery', 'tornado']
 dependency_links = []
