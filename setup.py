@@ -6,18 +6,23 @@ import re
 from setuptools import setup, find_packages
 
 
-version = re.compile(r'VERSION\s*=\s*\((.*?)\)')
+# version = re.compile(r'VERSION\s*=\s*\((.*?)\)')
 
+
+# def get_package_version():
+#     "returns package version without importing it"
+#     base = os.path.abspath(os.path.dirname(__file__))
+#     with open(os.path.join(base, "tcelery/__init__.py")) as initf:
+#         for line in initf:
+#             m = version.match(line.strip())
+#             if not m:
+#                 continue
+#             return ".".join(m.groups()[0].split(", "))
 
 def get_package_version():
-    "returns package version without importing it"
-    base = os.path.abspath(os.path.dirname(__file__))
-    with open(os.path.join(base, "tcelery/__init__.py")) as initf:
-        for line in initf:
-            m = version.match(line.strip())
-            if not m:
-                continue
-            return ".".join(m.groups()[0].split(", "))
+    version_tuple = __import__('tcelery').VERSION
+    version = ".".join([str(v) for v in version_tuple])
+    return version
 
 install_requires = ['celery', 'tornado']
 dependency_links = []
