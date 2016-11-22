@@ -69,6 +69,8 @@ class RedisConsumer(object):
                      task_id, key, timeout)
         self.subscriber.subscribe(
             key, partial(self.on_result, key, callback, timeout))
+        logger.info("Subscribed to key %s (%s) with timeout %s",
+                     task_id, key, timeout)
 
     def on_result(self, key, callback, timeout, result):
         if timeout:
