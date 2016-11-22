@@ -8,7 +8,7 @@ from .connection import ConnectionPool
 from .producer import NonBlockingTaskProducer
 from .result import AsyncResult
 
-__version__ = '99.3.10'
+__version__ = '99.3.11'
 VERSION = tuple(int(s) for s in __version__.split('.'))
 
 
