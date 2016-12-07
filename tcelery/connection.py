@@ -138,6 +138,7 @@ class ConnectionPool(object):
 
     def connect(self, broker_url, options=None, callback=None, confirm_delivery=False):
         self._on_ready = callback
+        LOGGER.info("Connecting to broker {}".format(broker_url))
         for _ in range(self._limit):
             conn = Connection(io_loop=self.io_loop, confirm_delivery=confirm_delivery)
             conn.connect(broker_url, options=options,

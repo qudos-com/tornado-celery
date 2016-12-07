@@ -18,6 +18,7 @@ class CelerySubscriber(BaseSubscriber):
         self.redis.unsubscribe(channel_name, callback)
 
     def on_message(self, msg):
+        logger.info('Calling on_message in tcelery.redis.CelerySubscriber')
         if not msg:
             return
         try:
@@ -65,6 +66,7 @@ class RedisConsumer(object):
                 timedelta(milliseconds=expires), self.on_timeout, key)
         else:
             timeout = None
+        logger.info("Subscription timeout expiration {}".format(expires))
         logger.info("Subscribing to key %s (%s) with timeout %s",
                      task_id, key, timeout)
         self.subscriber.subscribe(
@@ -73,6 +75,10 @@ class RedisConsumer(object):
                      task_id, key, timeout)
 
     def on_result(self, key, callback, timeout, result):
+        import inspect
+        curframe = inspect.currentframe()
+        calframe = inspect.getouterframes(curframe, 2)
+        logger.info('on_result caller name: {}'.format(calframe[1][3]))
         if timeout:
             self.producer.conn_pool.io_loop.remove_timeout(timeout)
         logger.info("Got result for key %s, unsubscribing...", key)

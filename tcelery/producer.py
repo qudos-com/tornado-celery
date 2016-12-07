@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import sys
+import logging
 
 from datetime import timedelta
 from kombu import serialization
@@ -22,6 +23,8 @@ except ImportError:
     RedisConsumer = None
 
 is_py3k = sys.version_info >= (3, 0)
+
+logger = logging.getLogger(__name__)
 
 class AMQPConsumer(object):
     def __init__(self, producer):
