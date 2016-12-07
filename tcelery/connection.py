@@ -112,6 +112,7 @@ class Connection(object):
                                           priority=priority,
                                           **properties)
 
+        LOGGER.info("Published message with routing_key: {}".format(routing_key))
         self.channel.basic_publish(exchange=exchange, routing_key=routing_key,
                                    body=body, properties=properties,
                                    mandatory=mandatory, immediate=immediate)

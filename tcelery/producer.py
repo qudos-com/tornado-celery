@@ -65,6 +65,8 @@ class NonBlockingTaskProducer(TaskProducer):
         compression = self.compression if compression is None else compression
         exchange = exchange or self.exchange
 
+        logger.info('Producer publish')
+
         callback = properties.pop('callback', None)
         task_id = body['id']
 
@@ -105,6 +107,7 @@ class NonBlockingTaskProducer(TaskProducer):
                                                            callback(async_result))
 
             else:
+                logger.info("Run callback passed from send_task")
                 callback(async_result)
 
         return result
